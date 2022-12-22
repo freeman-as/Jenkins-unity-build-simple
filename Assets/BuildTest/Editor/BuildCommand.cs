@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
@@ -21,7 +22,12 @@ public static class BuildCommand
         buildPlayerOptions.scenes = scenes;
         buildPlayerOptions.locationPathName = "./Build/completed.apk";
         buildPlayerOptions.target = BuildTarget.Android;
-        buildPlayerOptions.options = BuildOptions.None;
+        buildPlayerOptions.options = IsDevelopmentBuild ? BuildOptions.Development : BuildOptions.None;
+
+        if (IsDevelopmentBuild)
+        {
+            Debug.Log(GetScriptingDefineSymbolFromCommandlineArgument());
+        }
 
         // ビルド実行
         BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
@@ -37,6 +43,31 @@ public static class BuildCommand
             Debug.Log("ビルド失敗");
         }
     }
+
+    /// <summary>
+    /// シンボル取得
+    /// </summary>
+    /// <returns></returns>
+    public static string GetScriptingDefineSymbolFromCommandlineArgument()
+    {
+        var args = Environment.GetCommandLineArgs();
+
+        int i, len = args.Length;
+
+        for (i = 0; i < len; ++i)
+        {
+            switch (args[i])
+            {
+                case "-scriptingDefineSymbol":
+                    return args[i + 1];
+            }
+        }
+
+        return "";
+    }
+
+
+    private static bool IsDevelopmentBuild => Environment.GetCommandLineArgs().Contains("-developmentBuild");
 
     /// <summary>
     /// 有効なシーンのみ取得
