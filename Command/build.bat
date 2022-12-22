@@ -1,0 +1,1 @@
+"D:\Program Files\Unity\2021.3.4f1\Editor\Unity.exe" -batchmode -quit -projectPath D:\Development\Unity\Jenkins-unity-build-simple -executeMethod BuildCommand.Build
